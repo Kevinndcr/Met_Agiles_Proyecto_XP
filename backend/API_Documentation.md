@@ -4,7 +4,7 @@ This document provides detailed instructions for testing the API endpoints using
 
 ## Base URL
 ```
-http://localhost:3000
+http://localhost:3000/api
 ```
 
 ## Authentication
@@ -54,20 +54,20 @@ Authorization: Bearer <your_token>
 ### 2. Products
 
 #### Get All Products
-**GET** `/products`
+**GET** `http://localhost:3000/api/products`
 - **Description**: Retrieve all products.
 - **Response**:
   - `200 OK`: List of products.
 
 #### Get Product by ID
-**GET** `/products/:id`
+**GET** `http://localhost:3000/api/products/:id`
 - **Description**: Retrieve a product by its ID.
 - **Response**:
   - `200 OK`: Product details.
   - `404 Not Found`: Product not found.
 
 #### Create Product
-**POST** `/products`
+**POST** `http://localhost:3000/api/products`
 - **Description**: Add a new product (Admin only).
 - **Body** (JSON):
   ```json
