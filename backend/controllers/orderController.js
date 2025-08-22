@@ -1,4 +1,7 @@
 const Order = require('../models/orderModel');
+const Product = require('../models/productModel');
+const Purchase = require('../models/purchaseModel'); // Asegúrate de tener el modelo de Purchase importado
+const mongoose = require('mongoose');
 
 exports.getAllOrders = async (req, res) => {
   try {
@@ -22,12 +25,26 @@ exports.getOrderById = async (req, res) => {
 
 exports.createOrder = async (req, res) => {
   try {
-    const newOrder = new Order({ ...req.body, id_usuario: req.user._id });
-    await newOrder.save();
+    const items = req.body.items;
 
-    res.status(201).send(newOrder);
+    // Validar que todos los productos existen
+    for (const item of items) {
+      const product = await Product.findById(item.id_producto);
+      if (!product) {
+        return res.status(400).json({ error: `Producto con id ${item.id_producto} no existe.` });
+      }
+    }
+
+    const orderData = {
+      ...req.body,
+      id_usuario: req.user._id,
+      estado: req.body.estado || 'pendiente'
+    };
+    const newOrder = new Order(orderData);
+    await newOrder.save();
+    res.status(201).json(newOrder);
   } catch (err) {
-    res.status(500).send(err.message);
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -39,6 +56,17 @@ exports.updateOrder = async (req, res) => {
       { new: true }
     );
     if (!updatedOrder) return res.status(404).send('Order not found');
+
+    // Check if the order status is "completado" and create a purchase
+    if (updatedOrder.estado === "completado") {
+      const newPurchase = new Purchase({
+        id_compra: new mongoose.Types.ObjectId().toString(),
+        id_ordenCompra: updatedOrder._id.toString(),
+        items: updatedOrder.items,
+        precio_total: updatedOrder.precio_total,
+      });
+      await newPurchase.save();
+    }
 
     res.send(updatedOrder);
   } catch (err) {

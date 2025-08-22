@@ -22,7 +22,7 @@ Authorization: Bearer <your_token>
 ### 1. User Authentication
 
 #### Register
-**POST** `/api/auth/register`
+**POST** `http://localhost:3000/api/auth/register`
 - **Description**: Register a new user.
 - **Body** (JSON):
   ```json
@@ -37,7 +37,7 @@ Authorization: Bearer <your_token>
   - `201 Created`: User registered successfully.
 
 #### Login
-**POST** `/api/auth/login`
+**POST** `http://localhost:3000/api/auth/login`
 - **Description**: Authenticate a user and get a token.
 - **Body** (JSON):
   ```json
@@ -52,19 +52,6 @@ Authorization: Bearer <your_token>
 ---
 
 ### 2. Products
-
-#### Get All Products
-**GET** `http://localhost:3000/api/products`
-- **Description**: Retrieve all products.
-- **Response**:
-  - `200 OK`: List of products.
-
-#### Get Product by ID
-**GET** `http://localhost:3000/api/products/:id`
-- **Description**: Retrieve a product by its ID.
-- **Response**:
-  - `200 OK`: Product details.
-  - `404 Not Found`: Product not found.
 
 #### Create Product
 **POST** `http://localhost:3000/api/products`
@@ -84,32 +71,36 @@ Authorization: Bearer <your_token>
 - **Response**:
   - `201 Created`: Product created successfully.
 
+#### Get All Products
+**GET** `http://localhost:3000/api/products`
+- **Description**: Retrieve all products.
+- **Response**:
+  - `200 OK`: List of products.
+
+#### Get Product by ID
+**GET** `http://localhost:3000/api/products/:id`
+- **Description**: Retrieve a product by its ID.
+- **Response**:
+  - `200 OK`: Product details.
+  - `404 Not Found`: Product not found.
+
+
+
 ---
 
 ### 3. Orders
 
-#### Get All Orders
-**GET** `/orders`
-- **Description**: Retrieve all orders for the logged-in user.
-- **Response**:
-  - `200 OK`: List of orders.
-
-#### Get Order by ID
-**GET** `/orders/:id`
-- **Description**: Retrieve an order by its ID.
-- **Response**:
-  - `200 OK`: Order details.
-  - `404 Not Found`: Order not found.
-
 #### Create Order
-**POST** `/orders`
+** Requires BEARER TOKEN **
+**POST** `http://localhost:3000/api/orders`
 - **Description**: Create a new order.
 - **Body** (JSON):
+- 
   ```json
   {
     "items": [
       {
-        "id_producto": "123456",
+        "id_producto": "68a8e20f52348a7848e36168",
         "nombre_producto": "T-Shirt",
         "precio_unitario": 20,
         "cantidad": 2,
@@ -123,13 +114,30 @@ Authorization: Bearer <your_token>
 - **Response**:
   - `201 Created`: Order created successfully.
 
+#### Get All Orders
+** Requires BEARER TOKEN **
+**GET** `http://localhost:3000/api/orders`
+- **Description**: Retrieve all orders for the logged-in user.
+- **Response**:
+  - `200 OK`: List of orders.
+
+#### Get Order by ID
+** Requires BEARER TOKEN **
+**GET** `http://localhost:3000/api/orders/:id`
+- **Description**: Retrieve an order by its ID.
+- **Response**:
+  - `200 OK`: Order details.
+  - `404 Not Found`: Order not found.
+
+
 #### Update Order
-**PUT** `/orders/:id`
+** Requires BEARER TOKEN **
+**PUT** `http://localhost:3000/api/orders/:id`
 - **Description**: Update an existing order.
 - **Body** (JSON):
   ```json
   {
-    "estado": "enviado"
+    "estado": "completado"
   }
   ```
 - **Response**:
@@ -137,7 +145,8 @@ Authorization: Bearer <your_token>
   - `404 Not Found`: Order not found.
 
 #### Delete Order
-**DELETE** `/orders/:id`
+** Requires BEARER TOKEN **
+**DELETE** `http://localhost:3000/api/orders/:id`
 - **Description**: Delete an order by its ID.
 - **Response**:
   - `200 OK`: Order deleted successfully.
@@ -148,13 +157,13 @@ Authorization: Bearer <your_token>
 ### 4. Purchases
 
 #### Get All Purchases
-**GET** `/purchases`
+**GET** `http://localhost:3000/api/purchases`
 - **Description**: Retrieve all purchases for the logged-in user.
 - **Response**:
   - `200 OK`: List of purchases.
 
 #### Get Purchase by ID
-**GET** `/purchases/:id`
+**GET** `http://localhost:3000/api/purchases/:id`
 - **Description**: Retrieve a purchase by its ID.
 - **Response**:
   - `200 OK`: Purchase details.
@@ -165,3 +174,4 @@ Authorization: Bearer <your_token>
 ## Notes
 - Replace `<your_token>` with the token received after login.
 - Ensure the server is running on the specified port before testing the endpoints.
+- Para crear una orden, el campo `id_producto` debe ser el ObjectId real del producto existente en la base de datos. La API valida que el producto exista antes de crear la orden.
