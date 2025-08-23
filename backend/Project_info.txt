@@ -1,0 +1,82 @@
+Proyecto Tienda ropa en MongoDB
+
+- Mostrar productos. 
+- Añadir productos a un carrito. 
+- Gestionar órdenes con una base de datos. 
+- Integrar inteligencia artificial en alguna de las funcionalidades. 
+
+Colecciones principales:
+
+Usuario 
+- id_usuario 
+- nombre
+- apellido
+- email
+- passwordHash
+- direcciones [ { linea1, ciudad, pais, zip } ]
+
+
+Productos (ropa)
+- id_producto 
+- nombre_producto
+- precio_unitario
+- descripcion
+- imagen_producto
+- categoria
+- talla (S, M, L, XL)
+- color
+- stock
+
+
+CarritoCompra 
+- id_carrito 
+- id_usuario (si está logueado)
+- items [ 
+    { 
+      id_producto, 
+      nombre_producto, 
+      precio_unitario, 
+      cantidad 
+    } 
+  ]
+
+¿El total a pagar se puede calcular dinámicamente sumando los precios unitarios * cantidad de cada producto del carrito? 
+
+Orden_Compra
+- id_ordenCompra 
+- id_usuario
+- items [ 
+    { 
+      id_producto, 
+      nombre_producto, 
+      precio_unitario,   // congelado en el momento de la compra
+      cantidad, 
+      subtotal 
+    } 
+  ]
+- precio_total
+- fecha_creacion
+- estado (pendiente, pagado, cancelado, enviado, entregado)
+- direccion_envio
+
+///
+
+Compras_Realizadas
+- id_compra
+- id_ordenCompra          // referencia a la orden original
+- items [
+    {
+      id_producto,
+      nombre_producto,
+      precio_unitario,    // precio congelado
+      cantidad,
+      subtotal
+    }
+  ]
+- precio_total
+- fecha_compra            // cuando se confirma el pago
+
+*recordar usar el usuario de la ordenCompra y direccion_envio
+
+no trabajes con ObjectID, sino genera alguna función para asignar otros id de por ejemplo 6 dígitos o etc
+
