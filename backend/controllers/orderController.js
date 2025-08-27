@@ -2,6 +2,7 @@ const Order = require('../models/orderModel');
 const Product = require('../models/productModel');
 const Purchase = require('../models/purchaseModel'); // Asegúrate de tener el modelo de Purchase importado
 const mongoose = require('mongoose');
+const { generateRecommendations } = require('../utils/aiService');
 
 exports.getAllOrders = async (req, res) => {
   try {
@@ -82,5 +83,58 @@ exports.deleteOrder = async (req, res) => {
     res.send(deletedOrder);
   } catch (err) {
     res.status(500).send(err.message);
+  }
+};
+
+
+exports.getRecommendations = async (req, res) => {
+  try {
+    const userId = req.user._id; // Usar el ID del usuario autenticado
+
+    // Obtener todas las órdenes del usuario
+    const userOrders = await Order.find({ id_usuario: userId });
+
+    if (userOrders.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron órdenes para este usuario' });
+    }
+
+    // Extraer productos únicos del historial de órdenes
+    const purchasedProductsSet = new Set();
+    userOrders.forEach(order => {
+      order.items.forEach(item => {
+        if (item.id_producto && item.nombre_producto) {
+          purchasedProductsSet.add(JSON.stringify({
+            id: item.id_producto,
+            nombre: item.nombre_producto
+          }));
+        }
+      });
+    });
+
+    // Convertir set a array de objetos
+    const purchasedProducts = Array.from(purchasedProductsSet).map(item => JSON.parse(item));
+
+    // Obtener todos los productos actuales disponibles
+    const allProducts = await Product.find({}, { _id: 1, nombre_producto: 1 });
+    const availableProducts = allProducts.map(product => ({
+      id: product._id.toString(),
+      nombre: product.nombre_producto
+    }));
+
+    // Generar recomendaciones usando IA
+    console.log('Generando recomendaciones con IA...');
+    const recommendations = await generateRecommendations(purchasedProducts, availableProducts);
+    
+    res.json({
+      message: 'Recomendaciones generadas exitosamente',
+      user_id: userId,
+      total_orders: userOrders.length,
+      purchased_products_count: purchasedProducts.length,
+      recommendations: recommendations
+    });
+
+  } catch (err) {
+    console.error('Error generating recommendations:', err);
+    res.status(500).json({ error: err.message });
   }
 };
