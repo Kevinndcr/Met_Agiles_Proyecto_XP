@@ -1,14 +1,10 @@
-import { Link, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import Navbar from "@/components/layout/Navbar";
 
 export default function App() {
   return (
     <div style={{ padding: 24 }}>
-      <header style={{ display: "flex", gap: 12, marginBottom: 20 }}>
-        <Link to="/login">Login</Link>
-        <Link to="/register">Register</Link>
-      </header>
-
-      {/* Aquí se renderizan las rutas hijas */}
+      <Navbar />
       <Outlet />
     </div>
   );
