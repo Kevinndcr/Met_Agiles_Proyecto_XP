@@ -10,8 +10,4 @@ router.post('/', authMiddleware, orderController.createOrder);
 router.put('/:id', authMiddleware, orderController.updateOrder);
 router.delete('/:id', authMiddleware, orderController.deleteOrder);
 
-// Recommendations route
-router.get('/recommendations/:userId', authMiddleware, orderController.getRecommendations);
-
-
 module.exports = router;
